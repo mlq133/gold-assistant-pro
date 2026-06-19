@@ -33,6 +33,51 @@ IMPACT_KEYWORDS = {
 }
 
 
+
+_trans_dict = {
+    "Gold": "黄金", "gold": "黄金", "Price": "价格", "price": "价格",
+    "Market": "市场", "market": "市场", "Today": "今日", "today": "今日",
+    "Record": "记录", "High": "高点", "Low": "低点", "Record High": "历史新高",
+    "Fed": "美联储", "Federal Reserve": "美联储", "Rate": "利率", "rates": "利率",
+    "Hike": "加息", "hike": "加息", "Cut": "降息", "cut": "降息",
+    "Inflation": "通胀", "inflation": "通胀", "Dollar": "美元", "dollar": "美元",
+    "Analysis": "分析", "analysis": "分析", "Forecast": "预测", "forecast": "预测",
+    "Outlook": "展望", "outlook": "展望", "Weekly": "周度", "Daily": "日度",
+    "China": "中国", "India": "印度", "Global": "全球", "World": "世界",
+    "Central Bank": "央行", "central bank": "央行", "Reserve": "储备", "reserve": "储备",
+    "Up": "上涨", "up": "上涨", "Down": "下跌", "down": "下跌",
+    "Jump": "飙升", "jump": "飙升", "Drop": "下跌", "drop": "下跌",
+    "Fall": "下跌", "fall": "下跌", "Rise": "上涨", "rise": "上涨",
+    "Signal": "信号", "signal": "信号", "Update": "更新", "update": "更新",
+    "News": "新闻", "news": "新闻", "Report": "报告", "report": "报告",
+    "Strong": "强劲", "strong": "强劲", "Weak": "软弱", "weak": "软弱",
+    "Support": "支撑", "support": "支撑", "Resistance": "阻力", "resistance": "阻力",
+    "Technical": "技术", "technical": "技术", "Trading": "交易", "trading": "交易",
+    "Investor": "投资者", "investor": "投资者", "ETF": "ETF",
+    "Commodity": "商品", "commodity": "商品", "Safe Haven": "避险资产",
+    "Geopolitical": "地缘政治", "geopolitical": "地缘政治",
+    "Uncertainty": "不确定性", "uncertainty": "不确定性",
+    "Recovery": "复苏", "recovery": "复苏", "Growth": "增长", "growth": "增长",
+    "Economy": "经济", "economic": "经济", "Economic": "经济",
+    "Trade": "贸易", "trade": "贸易", "Tariff": "关税", "tariff": "关税",
+    "War": "战争", "Crisis": "危机", "crisis": "危机",
+    "Demand": "需求", "demand": "需求", "Supply": "供应", "supply": "供应",
+    "Stock": "股票", "stocks": "股市", "stock": "股票",
+    "Rebound": "反弹", "rebound": "反弹", "Surge": "涨停", "surge": "涨停",
+    "Plunge": "斩联", "plunge": "斩联", "Slide": "下滑", "slide": "下滑",
+    "Bounce": "反弹", "bounce": "反弹", "Gain": "收涨", "gain": "收涨",
+    "Loss": "丏损", "loss": "丏损", "lose": "下跌", "lose": "丏损",
+    "Strike": "冲击", "strike": "冲击", "Hit": "触及", "hit": "触及",
+    "Year": "年度", "year": "年", "Month": "月度", "month": "月",
+    "Week": "周", "week": "周", "Session": "交易日", "session": "交易日",
+}
+
+def _rough_translate(text):
+    result = text
+    for eng, cn in sorted(_trans_dict.items(), key=lambda x: -len(x[0])):
+        result = result.replace(eng, cn)
+    return result
+
 def fetch_gold_news(max_items=15):
     """获取黄金新闻（带翻译+时间）"""
     import urllib.parse
@@ -52,19 +97,8 @@ def fetch_gold_news(max_items=15):
                     desc = re.sub(r"<[^>]+>", "", item.findtext("description") or "")[:300]
                     if title and title not in seen:
                         seen.add(title)
-                        # simple local translation
-                        trans_title = title
-                        try:
-                            # try free mymemory API
-                            tr = requests.get("https://api.mymemory.translated.net/get?q=" + urllib.parse.quote(title[:200]) + chr(38) + "langpair=en" + chr(124) + "zh-CN", headers=_HEADERS, timeout=5)
-                            if tr.status_code == 200:
-                                jd = tr.json()
-                                if jd and jd.get("responseData") and jd["responseData"].get("translatedText"):
-                                    t2 = jd["responseData"]["translatedText"]
-                                    if t2 and len(t2) > 5:
-                                        trans_title = t2
-                        except:
-                            pass
+                        # rule-based rough translation
+                        trans_title = _rough_translate(title)
                         # extract pubDate time
                         pub_date = item.findtext("pubDate", "")
                         time_str = ""

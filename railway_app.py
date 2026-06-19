@@ -64,7 +64,7 @@ def wechat():
 
 def _handle_cmd(cmd):
     if not cmd:
-        return "发送 行情/分析/决策/新闻 获取实时数据"
+        return "?? ??/??/??/?? ??????"
     try:
         from data_fetcher import get_live_gold_sync, fetch_gold_cny, compute_dxy_from_rates
         from news_fetcher import fetch_gold_news, analyze_news_sentiment
@@ -75,57 +75,40 @@ def _handle_cmd(cmd):
         sentiment = analyze_news_sentiment(news)
         now = (datetime.utcnow() + __import__("datetime").timedelta(hours=8)).strftime("%m-%d %H:%M")
         nl = chr(10)
-        kw = "行" + "情"
-        fx = "分" + "析"
-        jc = "决" + "策"
-        xw = "新" + "闻"
-        if kw in cmd or "price" in cmd.lower():
-            msg = "实时金价 " + now + nl*2
-            msg += "国际金价: $" + str(round(usd,2)) + "/盎司" + nl
-            msg += "人民币金价: " + str(cny) + "/克" + nl
-            msg += "美元指数: " + str(dxy) + nl*2
-            msg += "新闻情绪: " + str(sentiment.get("summary","中性")) + nl*2
-            msg += "https://web-production-305e8.up.railway.app"
+        if "??" in cmd:
+            msg = f"???? {now}{nl*2}"
+            msg += f"????: ${round(usd,2)}/??{nl}"
+            msg += f"?????: {cny}/?{nl}"
+            msg += f"????: {dxy}{nl*2}"
+            msg += f"????: {sentiment.get(chr(115)+chr(117)+chr(109)+chr(109)+chr(97)+chr(114)+chr(121), chr(20013)+chr(24615))}"
+            msg += nl*2 + "https://web-production-305e8.up.railway.app"
             return msg
-        elif fx in cmd:
-            msg = "AI黄金分析 " + now + nl*2
-            msg += "国际金价: $" + str(round(usd,2)) + "/盎司" + nl
-            msg += "人民币金价: " + str(cny) + "/克" + nl
-            msg += "美元指数: " + str(dxy) + nl*2
+        elif "??" in cmd:
+            msg = f"AI???? {now}{nl*2}"
+            msg += f"????: ${round(usd,2)}/??{nl}"
+            msg += f"?????: {cny}/?{nl}"
+            msg += f"????: {dxy}{nl*2}"
             for n in (news or [])[:3]:
-                t = n.get("title","?")
-                msg += "- " + t[:40] + nl
+                t = n.get(chr(116)+chr(105)+chr(116)+chr(108)+chr(101), "?")
+                msg += f"- {t[:40]}{nl}"
             return msg
-        elif jc in cmd:
-            msg = "今日决策 " + now + nl*2
-            msg += "国际: $" + str(round(usd,2)) + "/盎司" + nl
-            msg += "人民币: " + str(cny) + "/克" + nl
-            msg += "美指: " + str(dxy) + nl*2
-            msg += "建议: 持有观望"
+        elif "??" in cmd:
+            msg = f"???? {now}{nl*2}"
+            msg += f"??: ${round(usd,2)}/??{nl}"
+            msg += f"???: {cny}/?{nl}"
+            msg += f"??: {dxy}{nl*2}"
+            msg += "??: ????"
             return msg
-        elif xw in cmd:
-            msg = "黄金新闻 " + now + nl*2
+        elif "??" in cmd:
+            msg = f"???? {now}{nl*2}"
             for n in (news or [])[:5]:
-                t = n.get("title","?")
-                msg += "- " + t[:50] + nl
+                t = n.get(chr(116)+chr(105)+chr(116)+chr(108)+chr(101), "?")
+                msg += f"- {t[:50]}{nl}"
             return msg
-            elif "预测" in cmd:
-            try:
-                from ml_predictor import get_ml_report
-                ml = get_ml_report()
-                msg = "AI预测 " + now + chr(10)*2
-                msg += "方向: " + str(ml.get("rf_direction","震荡")) + chr(10)
-                msg += "置信度: " + str(ml.get("rf_confidence","0")) + "%" + chr(10)
-                msg += "ML评分: " + str(ml.get("ml_score","50")) + "/100"
-                return msg
-            except Exception as e2:
-                log.error("ML预测失败: " + str(e2))
-                return "预测服务暂不可用，请稍后再试"
-    return "发送 行情/分析/决策/新闻/预测/看板 获取数据"
+        return "?? ??/??/??/?? ????"
     except Exception as e:
-        log.error("指令异常: " + str(e))
-        return "系统繁忙，请稍后再试"
-
+        log.error(f"????: {e}")
+        return "??????????"
 def _xml_resp(to_user, content, from_user="gh_goldassistant"):
     now = str(int(time.time()))
     xml = f"""<xml>
@@ -175,30 +158,23 @@ def health():
 
 
 def scheduler():
-    try:
-        from auto_operate import run_auto_operate
-        run_auto_operate()
-        log.info("智能运营调度已启动")
-    except Exception as e:
-        log.error(f"智能运营启动失败: {e}")
-        log.info("回退到简单定时推送")
-        time.sleep(10)
-        last_h = -1
-        while True:
-            try:
-                h = (datetime.utcnow() + __import__("datetime").timedelta(hours=8)).hour
-                if h in [9, 15, 21] and h != last_h:
-                    log.info(f"日报推送 {h}点")
-                    try:
-                        from auto_operate import push_daily_report
-                        push_daily_report()
-                    except Exception as e2:
-                        log.error(f"日报推送失败: {e2}")
-                    last_h = h
-            except: pass
-            time.sleep(300)
+    time.sleep(10)
+    log.info("定时推送启动")
+    last_h = -1
+    while True:
+        try:
+            h = datetime.now().hour
+            if h in [9, 15, 21] and h != last_h:
+                log.info(f"日报推送 {h}点")
+                try:
+                    from auto_operate import push_daily_report
+                    push_daily_report()
+                except: pass
+                last_h = h
+        except: pass
+        time.sleep(300)
 
 
 threading.Thread(target=scheduler, daemon=True).start()
-log.info("黄金智投服务启动完成 | 自动运营已开启")
+log.info("黄金智投服务启动完成")
 

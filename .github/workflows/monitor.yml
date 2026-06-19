@@ -1,0 +1,46 @@
+﻿name: 黄金智投助手自动监控
+
+on:
+  schedule:
+    - cron: "*/30 * * * *"   # 每30分钟运行一次
+  workflow_dispatch:         # 允许手动触发
+
+jobs:
+  monitor:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+      
+      - name: 设置Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          
+      - name: 安装依赖
+        run: |
+          pip install requests pandas numpy scikit-learn yfinance aiohttp beautifulsoup4 lxml -q
+          
+      - name: 运行黄金监控
+        env:
+          PUSHPLUS_TOKEN: ${{ secrets.PUSHPLUS_TOKEN }}
+        run: |
+          cd gold_assistant
+          python -c "
+import os, sys, json
+sys.path.insert(0, '.')
+
+# 从环境变量设置推送Token
+token = os.environ.get('PUSHPLUS_TOKEN', '')
+if token:
+    from wechat_pusher import save_config, send_push
+    save_config(pushplus_token=token, enabled='pushplus')
+    print('[OK] 推送Token已配置')
+else:
+    print('[WARN] 未设置PUSHPLUS_TOKEN，请在Settings > Secrets添加')
+
+# 运行监控
+from monitor_service import run_cycle
+run_cycle()
+print('[OK] 监控周期完成')
+"

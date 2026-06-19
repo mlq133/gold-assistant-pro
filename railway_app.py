@@ -73,7 +73,7 @@ def _handle_cmd(cmd):
         dxy = compute_dxy_from_rates()
         news = fetch_gold_news(5)
         sentiment = analyze_news_sentiment(news)
-        now = datetime.now().strftime("%m-%d %H:%M")
+        now = (datetime.utcnow() + __import__("datetime").timedelta(hours=8)).strftime("%m-%d %H:%M")
         nl = chr(10)
         kw = "行" + "情"
         fx = "分" + "析"

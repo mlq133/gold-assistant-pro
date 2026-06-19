@@ -121,7 +121,7 @@ def _handle_cmd(cmd):
             except Exception as e2:
                 log.error("ML预测失败: " + str(e2))
                 return "预测服务暂不可用，请稍后再试"
-    return "发送 行情/分析/决策/新闻/预测 获取数据"
+    return "发送 行情/分析/决策/新闻/预测/看板 获取数据"
     except Exception as e:
         log.error("指令异常: " + str(e))
         return "系统繁忙，请稍后再试"

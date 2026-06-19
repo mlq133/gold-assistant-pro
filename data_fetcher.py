@@ -291,14 +291,16 @@ def save_price_snapshot():
 
 
 def fetch_london_gold():
-    """获取伦敦金价 (XAU/GBP 近似值)"""
+    """获取伦敦金价 (XAU/GBP)"""
     try:
         import requests
-        r = requests.get("https://api.exchangerate-api.com/v4/latest/XAU", headers={"User-Agent": "Mozilla/5.0"}, timeout=10)
-        if r.status_code == 200:
-            gbp = r.json().get("rates", {}).get("GBP")
-            if gbp:
-                return round(gbp, 2)
+        usd = get_live_gold_sync()
+        if usd:
+            r = requests.get("https://api.exchangerate-api.com/v4/latest/USD", headers={"User-Agent": "Mozilla/5.0"}, timeout=10)
+            if r.status_code == 200:
+                gbp = r.json().get("rates", {}).get("GBP")
+                if gbp:
+                    return round(usd * gbp, 2)
     except:
         pass
     return None
@@ -307,12 +309,17 @@ def fetch_london_gold():
 def fetch_au9999():
     """获取 AU9999 国内现货金价"""
     try:
+        cny = fetch_gold_cny()
+        if cny:
+            return round(float(cny), 2)
+    except:
+        pass
+    try:
         import requests
         r = requests.get("https://api.exchangerate-api.com/v4/latest/XAU", headers={"User-Agent": "Mozilla/5.0"}, timeout=10)
         if r.status_code == 200:
             cny = r.json().get("rates", {}).get("CNY")
-            if cny:
-                return round(cny, 2)
+            if cny: return round(cny, 2)
     except:
         pass
     return None

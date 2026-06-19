@@ -196,8 +196,58 @@ def api_data():
     except Exception as e:
         return {"error": str(e)}@app.route("/")
 def index():
-    import base64
-    return base64.b64decode("PCFET0NUWVBFIGh0bWw+CjxodG1sIGxhbmc9InpoLUNOIj4KPGhlYWQ+PG1ldGEgY2hhcnNldD0iVVRGLTgiPjxtZXRhIG5hbWU9InZpZXdwb3J0IiBjb250ZW50PSJ3aWR0aD1kZXZpY2Utd2lkdGgsaW5pdGlhbC1zY2FsZT0xLjAiPgo8dGl0bGU+6buE6YeR5pm65oqV5Yqp5omLPC90aXRsZT4KPHNjcmlwdCBzcmM9Imh0dHBzOi8vY2RuLmpzZGVsaXZyLm5ldC9ucG0vY2hhcnQuanNANC40LjAvZGlzdC9jaGFydC51bWQubWluLmpzIj48L3NjcmlwdD4KPHN0eWxlPgoqe21hcmdpbjowO3BhZGRpbmc6MDtib3gtc2l6aW5nOmJvcmRlci1ib3g7Zm9udC1mYW1pbHk6LWFwcGxlLXN5c3RlbSxCbGlua01hY1N5c3RlbUZvbnQsJ1NlZ29lIFVJJyxSb2JvdG8sc2Fucy1zZXJpZn0KYm9keXtiYWNrZ3JvdW5kOiMwYTBlMWE7Y29sb3I6I2UwZTZmMDtwYWRkaW5nOjE2cHh9Ci5jb250YWluZXJ7bWF4LXdpZHRoOjg2MHB4O21hcmdpbjowIGF1dG99Cmgxe2ZvbnQtc2l6ZToyMnB4O21hcmdpbi1ib3R0b206MTZweDtjb2xvcjojZjBiOTBiO2Rpc3BsYXk6ZmxleDthbGlnbi1pdGVtczpjZW50ZXI7Z2FwOjhweH0KLmdyaWR7ZGlzcGxheTpncmlkO2dyaWQtdGVtcGxhdGUtY29sdW1uczoxZnIgMWZyO2dhcDoxMHB4O21hcmdpbi1ib3R0b206MTRweH0KLmNhcmR7YmFja2dyb3VuZDojMTMxYTJlO2JvcmRlci1yYWRpdXM6MTBweDtwYWRkaW5nOjE0cHg7Ym9yZGVyOjFweCBzb2xpZCAjMWUyYTQ1fQouY2FyZCBoM3tmb250LXNpemU6MTFweDtjb2xvcjojODg5MmIwO21hcmdpbi1ib3R0b206NHB4O3RleHQtdHJhbnNmb3JtOnVwcGVyY2FzZTtsZXR0ZXItc3BhY2luZzoxcHh9Ci5jYXJkIC52YWx1ZXtmb250LXNpemU6MjZweDtmb250LXdlaWdodDo3MDA7Y29sb3I6I2ZmZn0KLmNhcmQgLnZhbHVlLmdvbGR7Y29sb3I6I2YwYjkwYn0KLmNhcmQgLmxhYmVse2ZvbnQtc2l6ZToxMnB4O2NvbG9yOiM4ODkyYjA7bWFyZ2luLXRvcDoycHh9Ci5mdWxse2dyaWQtY29sdW1uOjEvLTF9Ci5jaGFydC13cmFwe2JhY2tncm91bmQ6IzBkMTUyNTtib3JkZXItcmFkaXVzOjhweDtwYWRkaW5nOjEycHg7bWFyZ2luLXRvcDo4cHg7aGVpZ2h0OjE4MHB4O3Bvc2l0aW9uOnJlbGF0aXZlfQoubmV3cy1pdGVte3BhZGRpbmc6NnB4IDA7Ym9yZGVyLWJvdHRvbToxcHggc29saWQgIzFlMmE0NTtmb250LXNpemU6MTJweDtsaW5lLWhlaWdodDoxLjR9Ci5uZXdzLWl0ZW06bGFzdC1jaGlsZHtib3JkZXI6bm9uZX0KLmZvb3Rlcnt0ZXh0LWFsaWduOmNlbnRlcjtjb2xvcjojNGE1NTY4O2ZvbnQtc2l6ZToxMXB4O21hcmdpbi10b3A6MTZweDtwYWRkaW5nOjhweH0KPC9zdHlsZT48L2hlYWQ+Cjxib2R5Pgo8ZGl2IGNsYXNzPSJjb250YWluZXIiPgo8aDE+8J+lhyDpu4Tph5HmmbrmipXliqnmiYs8L2gxPgo8ZGl2IGNsYXNzPSJncmlkIj4KPGRpdiBjbGFzcz0iY2FyZCI+PGgzPuWbvemZhemHkeS7tzwvaDM+PGRpdiBjbGFzcz0idmFsdWUgZ29sZCIgaWQ9ImdVc2QiPi0tPC9kaXY+PGRpdiBjbGFzcz0ibGFiZWwiIGlkPSJnVXNkVCI+JC9vejwvZGl2PjwvZGl2Pgo8ZGl2IGNsYXNzPSJjYXJkIj48aDM+5Lq65rCR5biB6YeR5Lu3PC9oMz48ZGl2IGNsYXNzPSJ2YWx1ZSBnb2xkIiBpZD0iZ0NueSI+LS08L2Rpdj48ZGl2IGNsYXNzPSJsYWJlbCI+5YWDL+WFizwvZGl2PjwvZGl2Pgo8ZGl2IGNsYXNzPSJjYXJkIj48aDM+5Lym5pWm6YeRPC9oMz48ZGl2IGNsYXNzPSJ2YWx1ZSIgaWQ9ImdMb24iPi0tPC9kaXY+PGRpdiBjbGFzcz0ibGFiZWwiPlhBVS9HQlA8L2Rpdj48L2Rpdj4KPGRpdiBjbGFzcz0iY2FyZCI+PGgzPue+juWFg+aMh+aVsDwvaDM+PGRpdiBjbGFzcz0idmFsdWUiIGlkPSJnRHh5Ij4tLTwvZGl2PjxkaXYgY2xhc3M9ImxhYmVsIj5EWFk8L2Rpdj48L2Rpdj4KPC9kaXY+CjxkaXYgY2xhc3M9ImNhcmQgZnVsbCI+PGgzPuS8puaVpumHkSBYQVUvR0JQIOi1sOWKvzwvaDM+PGRpdiBjbGFzcz0iY2hhcnQtd3JhcCI+PGNhbnZhcyBpZD0iY2hhcnRMb24iPjwvY2FudmFzPjwvZGl2PjwvZGl2Pgo8ZGl2IGNsYXNzPSJjYXJkIGZ1bGwiIHN0eWxlPSJtYXJnaW4tdG9wOjEwcHgiPjxoMz5BVTk5OTkg5Zu95YaF6YeRIOi1sOWKvzwvaDM+PGRpdiBjbGFzcz0iY2hhcnQtd3JhcCI+PGNhbnZhcyBpZD0iY2hhcnRBdSI+PC9jYW52YXM+PC9kaXY+PC9kaXY+CjxkaXYgY2xhc3M9ImNhcmQgZnVsbCIgc3R5bGU9Im1hcmdpbi10b3A6MTBweCI+PGgzPvCfk7Ag5paw6Ze7PC9oMz48ZGl2IGlkPSJuZXdzU2VjIiBzdHlsZT0ibWFyZ2luLXRvcDo4cHgiPuWKoOi9veS4rS4uLjwvZGl2PjwvZGl2Pgo8ZGl2IGNsYXNzPSJmb290ZXIiPuavjzMw56eS6Ieq5Yqo5Yi35pawPC9kaXY+CjwvZGl2Pgo8c2NyaXB0Pgp2YXIgaExvbj1bXSxoQXU9W10sY0xvbj1udWxsLGNBdT1udWxsOwpmdW5jdGlvbiBta0MoaWQsYyl7dmFyIGN0eD1kb2N1bWVudC5nZXRFbGVtZW50QnlJZChpZCkuZ2V0Q29udGV4dCgnMmQnKTtyZXR1cm4gbmV3IENoYXJ0KGN0eCx7dHlwZTonbGluZScsZGF0YTp7bGFiZWxzOltdLGRhdGFzZXRzOlt7ZGF0YTpbXSxib3JkZXJDb2xvcjpjLGJhY2tncm91bmRDb2xvcjpjKycyMCcsYm9yZGVyV2lkdGg6MixmaWxsOnRydWUsdGVuc2lvbjowLjMscG9pbnRSYWRpdXM6MH1dfSxvcHRpb25zOntyZXNwb25zaXZlOnRydWUsbWFpbnRhaW5Bc3BlY3RSYXRpbzpmYWxzZSxwbHVnaW5zOntsZWdlbmQ6e2Rpc3BsYXk6ZmFsc2V9fSxzY2FsZXM6e3g6e2Rpc3BsYXk6ZmFsc2V9LHk6e2dyaWQ6e2NvbG9yOicjMWUyYTQ1J30sdGlja3M6e2NvbG9yOicjODg5MmIwJyxmb250OntzaXplOjEwfX19fX19KX0KZnVuY3Rpb24gdXBDKGNoLHYpe2lmKCFjaHx8dj09bnVsbClyZXR1cm47dmFyIGQ9bmV3IERhdGUoKTtjaC5kYXRhLmxhYmVscy5wdXNoKGQuZ2V0SG91cnMoKSsnOicrU3RyaW5nKGQuZ2V0TWludXRlcygpKS5wYWRTdGFydCgyLCcwJykpO2NoLmRhdGEuZGF0YXNldHNbMF0uZGF0YS5wdXNoKHYpO2lmKGNoLmRhdGEubGFiZWxzLmxlbmd0aD4zMCl7Y2guZGF0YS5sYWJlbHMuc2hpZnQoKTtjaC5kYXRhLmRhdGFzZXRzWzBdLmRhdGEuc2hpZnQoKX1jaC51cGRhdGUoJ25vbmUnKX0KY0xvbj1ta0MoJ2NoYXJ0TG9uJywnI2YwYjkwYicpO2NBdT1ta0MoJ2NoYXJ0QXUnLCcjMDBjODUzJyk7CmFzeW5jIGZ1bmN0aW9uIHJlZigpe3RyeXsKdmFyIHI9YXdhaXQgZmV0Y2goJy9hcGkvZGF0YScpO2lmKCFyLm9rKXJldHVybjt2YXIgZD1hd2FpdCByLmpzb24oKTsKaWYoZC5nb2xkX3VzZCl7ZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ2dVc2QnKS50ZXh0Q29udGVudD0nJCcrZC5nb2xkX3VzZC50b0ZpeGVkKDIpO2RvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdnVXNkVCcpLnRleHRDb250ZW50PSckL296ICcrZC50aW1lfQppZihkLmdvbGRfY255KWRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdnQ255JykudGV4dENvbnRlbnQ9ZC5nb2xkX2NueTsKaWYoZC5keHkpZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ2dEeHknKS50ZXh0Q29udGVudD1kLmR4eS50b0ZpeGVkKDIpOwppZihkLmxvbmRvbl9nb2xkKXtkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnZ0xvbicpLnRleHRDb250ZW50PWQubG9uZG9uX2dvbGQ7dXBDKGNMb24scGFyc2VGbG9hdChkLmxvbmRvbl9nb2xkKSl9CmlmKGQuYXU5OTk5KXVwQyhjQXUscGFyc2VGbG9hdChkLmF1OTk5OSkpOwppZihkLm5ld3Mpe3ZhciBoPScnO2QubmV3cy5mb3JFYWNoKGZ1bmN0aW9uKG4pe2grPSc8ZGl2IGNsYXNzPSJuZXdzLWl0ZW0iPicrKChuLnRpbWV8fG4udGltZSk/JzxzcGFuIHN0eWxlPSJjb2xvcjojODg5MmIwO2ZvbnQtc2l6ZToxMHB4Ij4nK24udGltZSsnIDwvc3Bhbj4nOicnKSsobi50aXRsZV9jbnx8bi50aXRsZXx8Jz8nKSsnPC9kaXY+J30pO2RvY3VtZW50LmdldEVsZW1lbnRCeUlkKCduZXdzU2VjJykuaW5uZXJIVE1MPWh9Cn1jYXRjaChlKXt9fQpyZWYoKTtzZXRJbnRlcnZhbChyZWYsMzAwMDApOwo8L3NjcmlwdD48L2JvZHk+PC9odG1sPg==").decode()
+    return """<!DOCTYPE html>
+<html lang="zh-CN">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>黄金智投助手</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif}
+body{background:#0a0e1a;color:#e0e6f0;padding:16px}
+.container{max-width:860px;margin:0 auto}
+h1{font-size:22px;margin-bottom:16px;color:#f0b90b;display:flex;align-items:center;gap:8px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.card{background:#131a2e;border-radius:10px;padding:14px;border:1px solid #1e2a45}
+.card h3{font-size:11px;color:#8892b0;margin-bottom:4px;text-transform:uppercase;letter-spacing:1px}
+.card .value{font-size:26px;font-weight:700;color:#fff}
+.card .value.gold{color:#f0b90b}
+.card .label{font-size:12px;color:#8892b0;margin-top:2px}
+.full{grid-column:1/-1}
+.chart-wrap{background:#0d1525;border-radius:8px;padding:12px;margin-top:8px;height:180px;position:relative}
+.news-item{padding:6px 0;border-bottom:1px solid #1e2a45;font-size:12px;line-height:1.4}
+.news-item:last-child{border:none}
+.footer{text-align:center;color:#4a5568;font-size:11px;margin-top:16px;padding:8px}
+</style></head>
+<body>
+<div class="container">
+<h1>🥇 黄金智投助手</h1>
+<div class="grid">
+<div class="card"><h3>国际金价</h3><div class="value gold" id="gUsd">--</div><div class="label" id="gUsdT">$/oz</div></div>
+<div class="card"><h3>人民币金价</h3><div class="value gold" id="gCny">--</div><div class="label">元/克</div></div>
+<div class="card"><h3>伦敦金</h3><div class="value" id="gLon">--</div><div class="label">XAU/GBP</div></div>
+<div class="card"><h3>美元指数</h3><div class="value" id="gDxy">--</div><div class="label">DXY</div></div>
+</div>
+<div class="card full"><h3>伦敦金 XAU/GBP 走势</h3><div class="chart-wrap"><canvas id="chartLon"></canvas></div></div>
+<div class="card full" style="margin-top:10px"><h3>AU9999 国内金 走势</h3><div class="chart-wrap"><canvas id="chartAu"></canvas></div></div>
+<div class="card full" style="margin-top:10px"><h3>📰 新闻</h3><div id="newsSec" style="margin-top:8px">加载中...</div></div>
+<div class="footer">每30秒自动刷新</div>
+</div>
+<script>
+var hLon=[],hAu=[],cLon=null,cAu=null;
+function mkC(id,c){var ctx=document.getElementById(id).getContext('2d');return new Chart(ctx,{type:'line',data:{labels:[],datasets:[{data:[],borderColor:c,backgroundColor:c+'20',borderWidth:2,fill:true,tension:0.3,pointRadius:0}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{display:false},y:{grid:{color:'#1e2a45'},ticks:{color:'#8892b0',font:{size:10}}}}}})}
+function upC(ch,v){if(!ch||v==null)return;var d=new Date();ch.data.labels.push(d.getHours()+':'+String(d.getMinutes()).padStart(2,'0'));ch.data.datasets[0].data.push(v);if(ch.data.labels.length>30){ch.data.labels.shift();ch.data.datasets[0].data.shift()}ch.update('none')}
+cLon=mkC('chartLon','#f0b90b');cAu=mkC('chartAu','#00c853');
+async function ref(){try{
+var r=await fetch('/api/data');if(!r.ok)return;var d=await r.json();
+if(d.gold_usd){document.getElementById('gUsd').textContent='$'+d.gold_usd.toFixed(2);document.getElementById('gUsdT').textContent='$/oz '+d.time}
+if(d.gold_cny)document.getElementById('gCny').textContent=d.gold_cny;
+if(d.dxy)document.getElementById('gDxy').textContent=d.dxy.toFixed(2);
+if(d.london_gold){document.getElementById('gLon').textContent=d.london_gold;upC(cLon,parseFloat(d.london_gold))}
+if(d.au9999)upC(cAu,parseFloat(d.au9999));
+if(d.news){var h='';d.news.forEach(function(n){h+='<div class="news-item">'+((n.time||n.time)?'<span style="color:#8892b0;font-size:10px">'+n.time+' </span>':'')+(n.title_cn||n.title||'?')+'</div>'});document.getElementById('newsSec').innerHTML=h}
+}catch(e){}}
+ref();setInterval(ref,30000);
+</script></body></html>"""
 
 
 @app.route("/health")

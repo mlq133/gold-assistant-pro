@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>黄金智投助手</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,system-ui,sans-serif;background:#0f1923;color:#e0e0e0}
+.header{background:linear-gradient(135deg,#1a1a2e,#16213e,#0f3460);padding:20px;text-align:center;border-bottom:2px solid #e2a63b}
+.header h1{color:#e2a63b;font-size:24px}
+.container{max-width:1200px;margin:0 auto;padding:20px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:15px;margin-bottom:20px}
+.card{background:#1a2332;border-radius:10px;padding:15px;border:1px solid #2a3a4a}
+.card .label{color:#8899aa;font-size:12px}
+.card .value{font-size:24px;font-weight:bold;margin:5px 0}
+.gold{color:#e2a63b}.cny{color:#4ecdc4}.dxy{color:#ff6b6b}
+.card .sub{color:#667788;font-size:11px}
+.section-title{color:#e2a63b;font-size:16px;margin:15px 0 10px;padding-bottom:5px;border-bottom:1px solid #2a3a4a}
+.news-item{background:#1a2332;border-radius:8px;padding:12px;margin-bottom:8px;border-left:3px solid #e2a63b}
+.news-item .title{font-size:13px}.news-item .source{color:#667788;font-size:11px;margin-top:3px}
+.decision{text-align:center;padding:20px;background:linear-gradient(135deg,#1a2332,#1a2a3a);border-radius:10px;border:2px solid #e2a63b;margin-top:15px}
+.decision .action{font-size:28px;font-weight:bold;color:#4ecdc4}
+.decision .score{color:#8899aa;margin-top:5px;font-size:13px}
+.footer{text-align:center;color:#667788;padding:20px;font-size:11px}
+.loading{text-align:center;padding:40px;color:#667788}
+.refresh-btn{background:#e2a63b;color:#0f1923;border:none;padding:8px 16px;border-radius:6px;cursor:pointer;font-weight:bold;margin-top:10px}
+.refresh-btn:hover{background:#f0b84d}
+</style>
+</head>
+<body>
+<div class="header"><h1>🥇 黄金智投助手</h1><p style="color:#8899aa;font-size:13px;margin-top:5px">实时黄金价格监控</p></div>
+<div class="container">
+  <div class="grid" id="price-grid">
+    <div class="card"><div class="label">国际金价</div><div class="value gold" id="gold-usd">加载中...</div><div class="sub">XAU/USD 美元/盎司</div></div>
+    <div class="card"><div class="label">人民币金价</div><div class="value cny" id="gold-cny">加载中...</div><div class="sub">元/克</div></div>
+    <div class="card"><div class="label">美元指数</div><div class="value dxy" id="dxy">加载中...</div></div>
+    <div class="card"><div class="label">更新时间</div><div class="value" style="font-size:16px;color:#4ecdc4" id="update-time">--</div></div>
+  </div>
+  <h2 class="section-title">📰 黄金新闻</h2>
+  <div id="news-container"><div class="loading">加载中...</div></div>
+  <h2 class="section-title">🤖 AI 智能决策</h2>
+  <div class="decision" id="decision">
+    <div class="action">分析中...</div>
+    <div class="score">正在获取数据</div>
+  </div>
+  <div style="text-align:center;margin-top:15px"><button class="refresh-btn" onclick="fetchData()">🔄 刷新数据</button></div>
+  <div class="footer">⚠️ 仅供参考，不构成投资建议 · 数据来源: 新浪财经</div>
+</div>
+<script>
+async function fetchData() {
+  try {
+    var r = await fetch('/api/data');
+    var d = await r.json();
+    document.getElementById('gold-usd').textContent = d.gold_usd ? '$' + Number(d.gold_usd).toLocaleString() : '--';
+    document.getElementById('gold-cny').textContent = d.gold_cny ? '\u00a5' + d.gold_cny : '--';
+    document.getElementById('dxy').textContent = d.dxy || '--';
+    document.getElementById('update-time').textContent = d.time;
+    
+    if (d.news && d.news.length > 0) {
+      var html = '';
+      for (var n of d.news) {
+        html += '<div class="news-item"><div class="title">' + n.title + '</div><div class="source">' + (n.source || '') + '</div></div>';
+      }
+      document.getElementById('news-container').innerHTML = html;
+    }
+    
+        var s = d.sentiment || {};
+    var bullish = s.bullish || s['利多'] || 0;
+    var bearish = s.bearish || s['利空'] || 0;
+    var dec = d.decision || {};
+    var actionText = dec.action || '分析中';
+    var scoreVal = dec.score || 0;
+    var reasons = dec.reasons || [];
+    
+    var action, color;
+    if (actionText.indexOf('加仓') >= 0 || actionText.indexOf('买入') >= 0) {
+      action = '▶ ' + actionText; color = '#ff4444';
+    } else if (actionText.indexOf('减仓') >= 0 || actionText.indexOf('卖出') >= 0) {
+      action = '▶ ' + actionText; color = '#4ecdc4';
+    } else if (actionText.indexOf('持有') >= 0) {
+      action = '▶ ' + actionText; color = '#e2a63b';
+    } else {
+      action = '▶ ' + actionText; color = '#8899aa';
+    }
+    var reasonText = reasons.length > 0 ? reasons.join(' | ') : '基于实时金价与新闻情绪';
+    
+    document.getElementById('decision').innerHTML = 
+      '<div class="action" style="color:' + color + '">' + action + '</div>' +
+      '<div class="score" style="margin-top:8px">综合评分: ' + (typeof scoreVal === 'number' ? scoreVal.toFixed(1) : scoreVal) + '/200</div>' +
+      '<div class="score" style="font-size:12px;margin-top:4px">利多: ' + bullish + ' | 利空: ' + bearish + '</div>' +
+      '<div class="score" style="font-size:11px;margin-top:6px;color:#667788">' + reasonText + '</div>';
+  } catch(e) {
+    document.getElementById('news-container').innerHTML = '<div style="color:#ff6b6b">数据获取失败</div>';
+  }
+}
+fetchData();
+setInterval(fetchData, 30000);
+</script>
+</body>
+</html>

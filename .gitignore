@@ -1,0 +1,29 @@
+﻿# 缓存数据 (会自动重新生成)
+.cache/*.csv
+.cache/*.pyc
+__pycache__/
+
+# 配置文件 (含Token)
+wechat_config.json
+wechat_mp_config.json
+
+# 日志
+.cache/*.log
+.cache/streamlit_*.txt
+
+# Python
+*.pyc
+__pycache__/
+*.egg-info/
+dist/
+build/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# 系统
+Thumbs.db
+.DS_Store

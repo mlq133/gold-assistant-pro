@@ -34,12 +34,14 @@ IMPACT_KEYWORDS = {
 
 
 def fetch_gold_news(max_items=15):
-    """从Google News / Bing抓取黄金新闻"""
+    """获取黄金新闻（带翻译+时间）"""
+    import urllib.parse
     all_news, seen = [], set()
-    for url in [
-        "https://news.google.com/rss/search?q=gold+price+market&hl=en-US&gl=US&ceid=US:en",
-        "https://www.bing.com/news/search?q=gold+market+price&format=rss",
-    ]:
+    urls = [
+        "https://news.google.com/rss/search?q=gold+price+market" + chr(38) + "hl=en-US" + chr(38) + "gl=US" + chr(38) + "ceid=US:en",
+        "https://www.bing.com/news/search?q=gold+market+price" + chr(38) + "format=rss",
+    ]
+    for url in urls:
         try:
             r = requests.get(url, headers=_HEADERS, timeout=10)
             if r.status_code == 200:
@@ -50,12 +52,32 @@ def fetch_gold_news(max_items=15):
                     desc = re.sub(r"<[^>]+>", "", item.findtext("description") or "")[:300]
                     if title and title not in seen:
                         seen.add(title)
-                        all_news.append({"title": title, "link": link, "description": desc,
-                                        "source": "Google" if "google" in url else "Bing"})
-        except: pass
+                        # translate
+                        trans_title = title
+                        try:
+                            q = urllib.parse.quote(title[:200])
+                            tr = requests.get("https://translate.googleapis.com/translate_a/single?client=gtx" + chr(38) + "sl=en" + chr(38) + "tl=zh-CN" + chr(38) + "dt=t" + chr(38) + "q=" + q, headers=_HEADERS, timeout=5)
+                            if tr.status_code == 200:
+                                jd = tr.json()
+                                if jd and jd[0] and jd[0][0]:
+                                    trans_title = jd[0][0][0]
+                        except:
+                            pass
+                        # extract pubDate time
+                        pub_date = item.findtext("pubDate", "")
+                        time_str = ""
+                        if pub_date:
+                            try:
+                                dt = datetime.strptime(pub_date.replace("GMT","").replace("UTC","").strip(), "%a, %d %b %Y %H:%M:%S %z")
+                                time_str = (dt + timedelta(hours=8)).strftime("%m-%d %H:%M")
+                            except:
+                                pass
+                        all_news.append({"title": title, "title_cn": trans_title, "link": link,
+                                        "description": desc, "source": "Google" if "google" in url else "Bing",
+                                        "time": time_str})
+        except:
+            pass
     return all_news[:max_items]
-
-
 def classify_event(news_item):
     """对新闻事件分类"""
     text = (news_item.get("title","") + " " + news_item.get("description","")).lower()

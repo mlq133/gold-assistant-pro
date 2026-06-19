@@ -218,6 +218,11 @@ def wechat():
         root = ET.fromstring(xml)
         to_user = root.findtext("ToUserName", "")
         from_user = root.findtext("FromUserName", "")
+        msg_type = root.findtext("MsgType", "")
+        event = root.findtext("Event", "")
+        if msg_type == "event" and event == "subscribe":
+            log.info("新用户关注")
+            return xml_resp(from_user, "🤖 欢迎关注黄金智投助手！\n---\n发送关键词:\n📊 行情 - 实时金价\n📈 分析 - 走势分析\n🎯 决策 - 投资建议\n📰 新闻 - 黄金新闻\n---\n例如: 行情 查金价", to_user)
         content = root.findtext("Content", "").strip()
         log.info(f"微信消息: {content}")
         reply = handle_msg(content)
@@ -325,7 +330,7 @@ def handle_msg(cmd):
     elif cmd in ["看板", "数据看板"]:
         return f"📊 数据看板{nl}https://web-production-305e8.up.railway.app/{nl}请复制到浏览器打开"
 
-    elif cmd in ["帮助", "help", "菜单"]:
+    elif cmd in ["帮助", "help", "菜单", "怎么用", "使用", "hello", "你好", "hi"]:
         msg = f"🤖 黄金智投助手 {now}" + nl + "---" + nl
         msg += "发送关键词获取服务:" + nl
         msg += "📊 行情 - 实时金价" + nl
@@ -336,7 +341,21 @@ def handle_msg(cmd):
         msg += "📊 看板 - 数据仪表盘" + nl
         return msg
 
-    return handle_msg("行情")
+    # 默认回复：引导用户使用
+    msg = (
+        "🤖 黄金智投助手 " + now + "\n"
+        + "---\n"
+        + "发送关键词获取服务:\n"
+        + "📊 行情 - 实时国际金价\n"
+        + "📈 分析 - 黄金走势分析\n"
+        + "🎯 决策 - 今日投资建议\n"
+        + "📰 新闻 - 黄金新闻(带翻译)\n"
+        + "🤖 AI预测 - AI分析预测\n"
+        + "📊 看板 - 数据仪表盘\n"
+        + "---\n"
+        + "例如发送: 行情 查看实时金价"
+    )
+    return msg
 
 def xml_resp(to_user, content, from_user="gh_goldassistant"):
     now_str = str(int(time.time()))

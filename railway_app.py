@@ -64,7 +64,7 @@ def wechat():
 
 def _handle_cmd(cmd):
     if not cmd:
-        return "?? ??/??/??/?? ??????"
+        return "发送 行情/分析/决策/新闻 获取实时数据"
     try:
         from data_fetcher import get_live_gold_sync, fetch_gold_cny, compute_dxy_from_rates
         from news_fetcher import fetch_gold_news, analyze_news_sentiment
@@ -75,40 +75,45 @@ def _handle_cmd(cmd):
         sentiment = analyze_news_sentiment(news)
         now = datetime.now().strftime("%m-%d %H:%M")
         nl = chr(10)
-        if "??" in cmd:
-            msg = f"???? {now}{nl*2}"
-            msg += f"????: ${round(usd,2)}/??{nl}"
-            msg += f"?????: {cny}/?{nl}"
-            msg += f"????: {dxy}{nl*2}"
-            msg += f"????: {sentiment.get(chr(115)+chr(117)+chr(109)+chr(109)+chr(97)+chr(114)+chr(121), chr(20013)+chr(24615))}"
-            msg += nl*2 + "https://web-production-305e8.up.railway.app"
+        kw = "行" + "情"
+        fx = "分" + "析"
+        jc = "决" + "策"
+        xw = "新" + "闻"
+        if kw in cmd or "price" in cmd.lower():
+            msg = "实时金价 " + now + nl*2
+            msg += "国际金价: $" + str(round(usd,2)) + "/盎司" + nl
+            msg += "人民币金价: " + str(cny) + "/克" + nl
+            msg += "美元指数: " + str(dxy) + nl*2
+            msg += "新闻情绪: " + str(sentiment.get("summary","中性")) + nl*2
+            msg += "https://web-production-305e8.up.railway.app"
             return msg
-        elif "??" in cmd:
-            msg = f"AI???? {now}{nl*2}"
-            msg += f"????: ${round(usd,2)}/??{nl}"
-            msg += f"?????: {cny}/?{nl}"
-            msg += f"????: {dxy}{nl*2}"
+        elif fx in cmd:
+            msg = "AI黄金分析 " + now + nl*2
+            msg += "国际金价: $" + str(round(usd,2)) + "/盎司" + nl
+            msg += "人民币金价: " + str(cny) + "/克" + nl
+            msg += "美元指数: " + str(dxy) + nl*2
             for n in (news or [])[:3]:
-                t = n.get(chr(116)+chr(105)+chr(116)+chr(108)+chr(101), "?")
-                msg += f"- {t[:40]}{nl}"
+                t = n.get("title","?")
+                msg += "- " + t[:40] + nl
             return msg
-        elif "??" in cmd:
-            msg = f"???? {now}{nl*2}"
-            msg += f"??: ${round(usd,2)}/??{nl}"
-            msg += f"???: {cny}/?{nl}"
-            msg += f"??: {dxy}{nl*2}"
-            msg += "??: ????"
+        elif jc in cmd:
+            msg = "今日决策 " + now + nl*2
+            msg += "国际: $" + str(round(usd,2)) + "/盎司" + nl
+            msg += "人民币: " + str(cny) + "/克" + nl
+            msg += "美指: " + str(dxy) + nl*2
+            msg += "建议: 持有观望"
             return msg
-        elif "??" in cmd:
-            msg = f"???? {now}{nl*2}"
+        elif xw in cmd:
+            msg = "黄金新闻 " + now + nl*2
             for n in (news or [])[:5]:
-                t = n.get(chr(116)+chr(105)+chr(116)+chr(108)+chr(101), "?")
-                msg += f"- {t[:50]}{nl}"
+                t = n.get("title","?")
+                msg += "- " + t[:50] + nl
             return msg
-        return "?? ??/??/??/?? ????"
+        return "发送 行情/分析/决策/新闻 获取数据"
     except Exception as e:
-        log.error(f"????: {e}")
-        return "??????????"
+        log.error("指令异常: " + str(e))
+        return "系统繁忙，请稍后再试"
+
 def _xml_resp(to_user, content, from_user="gh_goldassistant"):
     now = str(int(time.time()))
     xml = f"""<xml>

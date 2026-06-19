@@ -104,10 +104,15 @@ def fetch_gold_news(max_items=15):
                         time_str = ""
                         if pub_date:
                             try:
-                                dt = datetime.strptime(pub_date.replace("GMT","").replace("UTC","").strip(), "%a, %d %b %Y %H:%M:%S %z")
+                                dt = datetime.strptime(pub_date.strip(), "%a, %d %b %Y %H:%M:%S %z")
                                 time_str = (dt + timedelta(hours=8)).strftime("%m-%d %H:%M")
                             except:
-                                pass
+                                try:
+                                    s = pub_date.replace("GMT","").replace("UTC","").replace("+0000","").replace("-0000","").strip()
+                                    dt = datetime.strptime(s, "%a, %d %b %Y %H:%M:%S")
+                                    time_str = (dt + timedelta(hours=8)).strftime("%m-%d %H:%M")
+                                except:
+                                    pass
                         all_news.append({"title": title, "title_cn": trans_title, "link": link,
                                         "description": desc, "source": "Google" if "google" in url else "Bing",
                                         "time": time_str})

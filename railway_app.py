@@ -163,23 +163,30 @@ def health():
 
 
 def scheduler():
-    time.sleep(10)
-    log.info("定时推送启动")
-    last_h = -1
-    while True:
-        try:
-            h = datetime.now().hour
-            if h in [9, 15, 21] and h != last_h:
-                log.info(f"日报推送 {h}点")
-                try:
-                    from auto_operate import push_daily_report
-                    push_daily_report()
-                except: pass
-                last_h = h
-        except: pass
-        time.sleep(300)
+    try:
+        from auto_operate import run_auto_operate
+        run_auto_operate()
+        log.info("智能运营调度已启动")
+    except Exception as e:
+        log.error(f"智能运营启动失败: {e}")
+        log.info("回退到简单定时推送")
+        time.sleep(10)
+        last_h = -1
+        while True:
+            try:
+                h = (datetime.utcnow() + __import__("datetime").timedelta(hours=8)).hour
+                if h in [9, 15, 21] and h != last_h:
+                    log.info(f"日报推送 {h}点")
+                    try:
+                        from auto_operate import push_daily_report
+                        push_daily_report()
+                    except Exception as e2:
+                        log.error(f"日报推送失败: {e2}")
+                    last_h = h
+            except: pass
+            time.sleep(300)
 
 
 threading.Thread(target=scheduler, daemon=True).start()
-log.info("黄金智投服务启动完成")
+log.info("黄金智投服务启动完成 | 自动运营已开启")
 

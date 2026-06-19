@@ -1,0 +1,21 @@
+﻿{
+  "name": "gold-assistant",
+  "description": "黄金智投助手 - 微信公众号后端服务",
+  "env": {
+    "PUSHPLUS_TOKEN": {
+      "description": "PushPlus推送Token",
+      "value": "525c9a8249cd4677ac7503feca84ea39",
+      "required": true
+    },
+    "APPID": {
+      "description": "微信公众号AppID",
+      "value": "wxdcd9778a1383b407",
+      "required": true
+    },
+    "APPSECRET": {
+      "description": "微信公众号AppSecret",
+      "value": "d706db1236e55299f6a43bf211617bdd",
+      "required": true
+    }
+  }
+}

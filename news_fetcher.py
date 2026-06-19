@@ -52,15 +52,17 @@ def fetch_gold_news(max_items=15):
                     desc = re.sub(r"<[^>]+>", "", item.findtext("description") or "")[:300]
                     if title and title not in seen:
                         seen.add(title)
-                        # translate
+                        # simple local translation
                         trans_title = title
                         try:
-                            q = urllib.parse.quote(title[:200])
-                            tr = requests.get("https://translate.googleapis.com/translate_a/single?client=gtx" + chr(38) + "sl=en" + chr(38) + "tl=zh-CN" + chr(38) + "dt=t" + chr(38) + "q=" + q, headers=_HEADERS, timeout=5)
+                            # try free mymemory API
+                            tr = requests.get("https://api.mymemory.translated.net/get?q=" + urllib.parse.quote(title[:200]) + chr(38) + "langpair=en" + chr(124) + "zh-CN", headers=_HEADERS, timeout=5)
                             if tr.status_code == 200:
                                 jd = tr.json()
-                                if jd and jd[0] and jd[0][0]:
-                                    trans_title = jd[0][0][0]
+                                if jd and jd.get("responseData") and jd["responseData"].get("translatedText"):
+                                    t2 = jd["responseData"]["translatedText"]
+                                    if t2 and len(t2) > 5:
+                                        trans_title = t2
                         except:
                             pass
                         # extract pubDate time

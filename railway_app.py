@@ -64,7 +64,7 @@ def wechat():
 
 def _handle_cmd(cmd):
     if not cmd:
-        return "?? ??/??/??/?? ??????"
+        return "\u53d1\u9001 \u884c\u60c5/\u5206\u6790/\u51b3\u7b56/\u65b0\u95fb/\u9884\u6d4b/\u770b\u677f \u83b7\u53d6\u5b9e\u65f6\u6570\u636e"
     try:
         from data_fetcher import get_live_gold_sync, fetch_gold_cny, compute_dxy_from_rates
         from news_fetcher import fetch_gold_news, analyze_news_sentiment
@@ -75,40 +75,58 @@ def _handle_cmd(cmd):
         sentiment = analyze_news_sentiment(news)
         now = (datetime.utcnow() + __import__("datetime").timedelta(hours=8)).strftime("%m-%d %H:%M")
         nl = chr(10)
-        if "??" in cmd:
-            msg = f"???? {now}{nl*2}"
-            msg += f"????: ${round(usd,2)}/??{nl}"
-            msg += f"?????: {cny}/?{nl}"
-            msg += f"????: {dxy}{nl*2}"
-            msg += f"????: {sentiment.get(chr(115)+chr(117)+chr(109)+chr(109)+chr(97)+chr(114)+chr(121), chr(20013)+chr(24615))}"
-            msg += nl*2 + "https://web-production-305e8.up.railway.app"
+        if "\u884c\u60c5" in cmd or "price" in cmd.lower():
+            msg = "\u5b9e\u65f6\u91d1\u4ef7 " + now + nl*2
+            msg += "\u56fd\u9645\u91d1\u4ef7: $" + str(round(usd,2)) + "/\u76ce\u53f8" + nl
+            msg += "\u4eba\u6c11\u5e01\u91d1\u4ef7: " + str(cny) + "/\u514b" + nl
+            msg += "\u7f8e\u5143\u6307\u6570: " + str(dxy) + nl*2
+            msg += "\u65b0\u95fb\u60c5\u7eea: " + str(sentiment.get("summary","\u4e2d\u6027")) + nl*2
+            msg += "https://web-production-305e8.up.railway.app"
             return msg
-        elif "??" in cmd:
-            msg = f"AI???? {now}{nl*2}"
-            msg += f"????: ${round(usd,2)}/??{nl}"
-            msg += f"?????: {cny}/?{nl}"
-            msg += f"????: {dxy}{nl*2}"
+        elif "\u5206\u6790" in cmd:
+            msg = "AI\u9ec4\u91d1\u5206\u6790 " + now + nl*2
+            msg += "\u56fd\u9645\u91d1\u4ef7: $" + str(round(usd,2)) + "/\u76ce\u53f8" + nl
+            msg += "\u4eba\u6c11\u5e01\u91d1\u4ef7: " + str(cny) + "/\u514b" + nl
+            msg += "\u7f8e\u5143\u6307\u6570: " + str(dxy) + nl*2
             for n in (news or [])[:3]:
-                t = n.get(chr(116)+chr(105)+chr(116)+chr(108)+chr(101), "?")
-                msg += f"- {t[:40]}{nl}"
+                t = n.get("title","?")
+                msg += "- " + t[:40] + nl
+            msg += nl + "\u60c5\u7eea: " + str(sentiment.get("summary","\u4e2d\u6027"))
             return msg
-        elif "??" in cmd:
-            msg = f"???? {now}{nl*2}"
-            msg += f"??: ${round(usd,2)}/??{nl}"
-            msg += f"???: {cny}/?{nl}"
-            msg += f"??: {dxy}{nl*2}"
-            msg += "??: ????"
+        elif "\u51b3\u7b56" in cmd:
+            msg = "\u4eca\u65e5\u51b3\u7b56 " + now + nl*2
+            msg += "\u56fd\u9645: $" + str(round(usd,2)) + "/\u76ce\u53f8" + nl
+            msg += "\u4eba\u6c11\u5e01: " + str(cny) + "/\u514b" + nl
+            msg += "\u7f8e\u6307: " + str(dxy) + nl*2
+            msg += "\u5efa\u8bae: \u6301\u6709\u89c2\u671b"
             return msg
-        elif "??" in cmd:
-            msg = f"???? {now}{nl*2}"
+        elif "\u65b0\u95fb" in cmd:
+            msg = "\u9ec4\u91d1\u65b0\u95fb " + now + nl*2
+            msg += "\u60c5\u7eea: " + str(sentiment.get("summary","\u4e2d\u6027")) + nl*2
             for n in (news or [])[:5]:
-                t = n.get(chr(116)+chr(105)+chr(116)+chr(108)+chr(101), "?")
-                msg += f"- {t[:50]}{nl}"
+                t = n.get("title","?")
+                msg += "- " + t[:50] + nl
             return msg
-        return "?? ??/??/??/?? ????"
+        elif "\u9884\u6d4b" in cmd:
+            try:
+                from ml_predictor import get_ml_report
+                ml = get_ml_report()
+                msg = "AI\u9884\u6d4b " + now + nl*2
+                msg += "\u65b9\u5411: " + str(ml.get("rf_direction","\u9707\u8361")) + nl
+                msg += "\u7f6e\u4fe1\u5ea6: " + str(ml.get("rf_confidence","0")) + "%" + nl
+                msg += "ML\u8bc4\u5206: " + str(ml.get("ml_score","50")) + "/100"
+                return msg
+            except Exception as e2:
+                return "\u9884\u6d4b\u670d\u52a1\u6682\u4e0d\u53ef\u7528"
+        elif "\u770b\u677f" in cmd:
+            msg = "\u6570\u636e\u770b\u677f " + now
+            msg += nl + "https://web-production-305e8.up.railway.app/"
+            msg += nl + "\u8bf7\u590d\u5236\u5230\u6d4f\u89c8\u5668\u6253\u5f00"
+            return msg
+        return "\u53d1\u9001 \u884c\u60c5/\u5206\u6790/\u51b3\u7b56/\u65b0\u95fb/\u9884\u6d4b/\u770b\u677f \u83b7\u53d6\u6570\u636e"
     except Exception as e:
-        log.error(f"????: {e}")
-        return "??????????"
+        log.error("\u6307\u4ee4\u5f02\u5e38: " + str(e))
+        return "\u7cfb\u7edf\u5fd9\uff0c\u8bf7\u7a0d\u540e\u518d\u8bd5"
 def _xml_resp(to_user, content, from_user="gh_goldassistant"):
     now = str(int(time.time()))
     xml = f"""<xml>

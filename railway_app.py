@@ -196,14 +196,37 @@ def api_data():
     except Exception as e:
         return {"error": str(e)}@app.route("/")
 def index():
-    try:
-        with open(os.path.join(PROJECT_DIR, "dashboard.html"), "r", encoding="utf-8") as f:
-            return f.read()
-    except:
-        return "<h1>黄金智投助手</h1><p>运行中</p>"
+    import base64
+    return base64.b64decode("PCFET0NUWVBFIGh0bWw+CjxodG1sIGxhbmc9InpoLUNOIj4KPGhlYWQ+PG1ldGEgY2hhcnNldD0iVVRGLTgiPjxtZXRhIG5hbWU9InZpZXdwb3J0IiBjb250ZW50PSJ3aWR0aD1kZXZpY2Utd2lkdGgsaW5pdGlhbC1zY2FsZT0xLjAiPgo8dGl0bGU+6buE6YeR5pm65oqV5Yqp5omLPC90aXRsZT4KPHNjcmlwdCBzcmM9Imh0dHBzOi8vY2RuLmpzZGVsaXZyLm5ldC9ucG0vY2hhcnQuanNANC40LjAvZGlzdC9jaGFydC51bWQubWluLmpzIj48L3NjcmlwdD4KPHN0eWxlPgoqe21hcmdpbjowO3BhZGRpbmc6MDtib3gtc2l6aW5nOmJvcmRlci1ib3g7Zm9udC1mYW1pbHk6LWFwcGxlLXN5c3RlbSxCbGlua01hY1N5c3RlbUZvbnQsJ1NlZ29lIFVJJyxSb2JvdG8sc2Fucy1zZXJpZn0KYm9keXtiYWNrZ3JvdW5kOiMwYTBlMWE7Y29sb3I6I2UwZTZmMDtwYWRkaW5nOjE2cHh9Ci5jb250YWluZXJ7bWF4LXdpZHRoOjg2MHB4O21hcmdpbjowIGF1dG99Cmgxe2ZvbnQtc2l6ZToyMnB4O21hcmdpbi1ib3R0b206MTZweDtjb2xvcjojZjBiOTBiO2Rpc3BsYXk6ZmxleDthbGlnbi1pdGVtczpjZW50ZXI7Z2FwOjhweH0KLmdyaWR7ZGlzcGxheTpncmlkO2dyaWQtdGVtcGxhdGUtY29sdW1uczoxZnIgMWZyO2dhcDoxMHB4O21hcmdpbi1ib3R0b206MTRweH0KLmNhcmR7YmFja2dyb3VuZDojMTMxYTJlO2JvcmRlci1yYWRpdXM6MTBweDtwYWRkaW5nOjE0cHg7Ym9yZGVyOjFweCBzb2xpZCAjMWUyYTQ1fQouY2FyZCBoM3tmb250LXNpemU6MTFweDtjb2xvcjojODg5MmIwO21hcmdpbi1ib3R0b206NHB4O3RleHQtdHJhbnNmb3JtOnVwcGVyY2FzZTtsZXR0ZXItc3BhY2luZzoxcHh9Ci5jYXJkIC52YWx1ZXtmb250LXNpemU6MjZweDtmb250LXdlaWdodDo3MDA7Y29sb3I6I2ZmZn0KLmNhcmQgLnZhbHVlLmdvbGR7Y29sb3I6I2YwYjkwYn0KLmNhcmQgLmxhYmVse2ZvbnQtc2l6ZToxMnB4O2NvbG9yOiM4ODkyYjA7bWFyZ2luLXRvcDoycHh9Ci5mdWxse2dyaWQtY29sdW1uOjEvLTF9Ci5jaGFydC13cmFwe2JhY2tncm91bmQ6IzBkMTUyNTtib3JkZXItcmFkaXVzOjhweDtwYWRkaW5nOjEycHg7bWFyZ2luLXRvcDo4cHg7aGVpZ2h0OjE4MHB4O3Bvc2l0aW9uOnJlbGF0aXZlfQoubmV3cy1pdGVte3BhZGRpbmc6NnB4IDA7Ym9yZGVyLWJvdHRvbToxcHggc29saWQgIzFlMmE0NTtmb250LXNpemU6MTJweDtsaW5lLWhlaWdodDoxLjR9Ci5uZXdzLWl0ZW06bGFzdC1jaGlsZHtib3JkZXI6bm9uZX0KLmZvb3Rlcnt0ZXh0LWFsaWduOmNlbnRlcjtjb2xvcjojNGE1NTY4O2ZvbnQtc2l6ZToxMXB4O21hcmdpbi10b3A6MTZweDtwYWRkaW5nOjhweH0KPC9zdHlsZT48L2hlYWQ+Cjxib2R5Pgo8ZGl2IGNsYXNzPSJjb250YWluZXIiPgo8aDE+8J+lhyDpu4Tph5HmmbrmipXliqnmiYs8L2gxPgo8ZGl2IGNsYXNzPSJncmlkIj4KPGRpdiBjbGFzcz0iY2FyZCI+PGgzPuWbvemZhemHkeS7tzwvaDM+PGRpdiBjbGFzcz0idmFsdWUgZ29sZCIgaWQ9ImdVc2QiPi0tPC9kaXY+PGRpdiBjbGFzcz0ibGFiZWwiIGlkPSJnVXNkVCI+JC9vejwvZGl2PjwvZGl2Pgo8ZGl2IGNsYXNzPSJjYXJkIj48aDM+5Lq65rCR5biB6YeR5Lu3PC9oMz48ZGl2IGNsYXNzPSJ2YWx1ZSBnb2xkIiBpZD0iZ0NueSI+LS08L2Rpdj48ZGl2IGNsYXNzPSJsYWJlbCI+5YWDL+WFizwvZGl2PjwvZGl2Pgo8ZGl2IGNsYXNzPSJjYXJkIj48aDM+5Lym5pWm6YeRPC9oMz48ZGl2IGNsYXNzPSJ2YWx1ZSIgaWQ9ImdMb24iPi0tPC9kaXY+PGRpdiBjbGFzcz0ibGFiZWwiPlhBVS9HQlA8L2Rpdj48L2Rpdj4KPGRpdiBjbGFzcz0iY2FyZCI+PGgzPue+juWFg+aMh+aVsDwvaDM+PGRpdiBjbGFzcz0idmFsdWUiIGlkPSJnRHh5Ij4tLTwvZGl2PjxkaXYgY2xhc3M9ImxhYmVsIj5EWFk8L2Rpdj48L2Rpdj4KPC9kaXY+CjxkaXYgY2xhc3M9ImNhcmQgZnVsbCI+PGgzPuS8puaVpumHkSBYQVUvR0JQIOi1sOWKvzwvaDM+PGRpdiBjbGFzcz0iY2hhcnQtd3JhcCI+PGNhbnZhcyBpZD0iY2hhcnRMb24iPjwvY2FudmFzPjwvZGl2PjwvZGl2Pgo8ZGl2IGNsYXNzPSJjYXJkIGZ1bGwiIHN0eWxlPSJtYXJnaW4tdG9wOjEwcHgiPjxoMz5BVTk5OTkg5Zu95YaF6YeRIOi1sOWKvzwvaDM+PGRpdiBjbGFzcz0iY2hhcnQtd3JhcCI+PGNhbnZhcyBpZD0iY2hhcnRBdSI+PC9jYW52YXM+PC9kaXY+PC9kaXY+CjxkaXYgY2xhc3M9ImNhcmQgZnVsbCIgc3R5bGU9Im1hcmdpbi10b3A6MTBweCI+PGgzPvCfk7Ag5paw6Ze7PC9oMz48ZGl2IGlkPSJuZXdzU2VjIiBzdHlsZT0ibWFyZ2luLXRvcDo4cHgiPuWKoOi9veS4rS4uLjwvZGl2PjwvZGl2Pgo8ZGl2IGNsYXNzPSJmb290ZXIiPuavjzMw56eS6Ieq5Yqo5Yi35pawPC9kaXY+CjwvZGl2Pgo8c2NyaXB0Pgp2YXIgaExvbj1bXSxoQXU9W10sY0xvbj1udWxsLGNBdT1udWxsOwpmdW5jdGlvbiBta0MoaWQsYyl7dmFyIGN0eD1kb2N1bWVudC5nZXRFbGVtZW50QnlJZChpZCkuZ2V0Q29udGV4dCgnMmQnKTtyZXR1cm4gbmV3IENoYXJ0KGN0eCx7dHlwZTonbGluZScsZGF0YTp7bGFiZWxzOltdLGRhdGFzZXRzOlt7ZGF0YTpbXSxib3JkZXJDb2xvcjpjLGJhY2tncm91bmRDb2xvcjpjKycyMCcsYm9yZGVyV2lkdGg6MixmaWxsOnRydWUsdGVuc2lvbjowLjMscG9pbnRSYWRpdXM6MH1dfSxvcHRpb25zOntyZXNwb25zaXZlOnRydWUsbWFpbnRhaW5Bc3BlY3RSYXRpbzpmYWxzZSxwbHVnaW5zOntsZWdlbmQ6e2Rpc3BsYXk6ZmFsc2V9fSxzY2FsZXM6e3g6e2Rpc3BsYXk6ZmFsc2V9LHk6e2dyaWQ6e2NvbG9yOicjMWUyYTQ1J30sdGlja3M6e2NvbG9yOicjODg5MmIwJyxmb250OntzaXplOjEwfX19fX19KX0KZnVuY3Rpb24gdXBDKGNoLHYpe2lmKCFjaHx8dj09bnVsbClyZXR1cm47dmFyIGQ9bmV3IERhdGUoKTtjaC5kYXRhLmxhYmVscy5wdXNoKGQuZ2V0SG91cnMoKSsnOicrU3RyaW5nKGQuZ2V0TWludXRlcygpKS5wYWRTdGFydCgyLCcwJykpO2NoLmRhdGEuZGF0YXNldHNbMF0uZGF0YS5wdXNoKHYpO2lmKGNoLmRhdGEubGFiZWxzLmxlbmd0aD4zMCl7Y2guZGF0YS5sYWJlbHMuc2hpZnQoKTtjaC5kYXRhLmRhdGFzZXRzWzBdLmRhdGEuc2hpZnQoKX1jaC51cGRhdGUoJ25vbmUnKX0KY0xvbj1ta0MoJ2NoYXJ0TG9uJywnI2YwYjkwYicpO2NBdT1ta0MoJ2NoYXJ0QXUnLCcjMDBjODUzJyk7CmFzeW5jIGZ1bmN0aW9uIHJlZigpe3RyeXsKdmFyIHI9YXdhaXQgZmV0Y2goJy9hcGkvZGF0YScpO2lmKCFyLm9rKXJldHVybjt2YXIgZD1hd2FpdCByLmpzb24oKTsKaWYoZC5nb2xkX3VzZCl7ZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ2dVc2QnKS50ZXh0Q29udGVudD0nJCcrZC5nb2xkX3VzZC50b0ZpeGVkKDIpO2RvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdnVXNkVCcpLnRleHRDb250ZW50PSckL296ICcrZC50aW1lfQppZihkLmdvbGRfY255KWRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdnQ255JykudGV4dENvbnRlbnQ9ZC5nb2xkX2NueTsKaWYoZC5keHkpZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ2dEeHknKS50ZXh0Q29udGVudD1kLmR4eS50b0ZpeGVkKDIpOwppZihkLmxvbmRvbl9nb2xkKXtkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnZ0xvbicpLnRleHRDb250ZW50PWQubG9uZG9uX2dvbGQ7dXBDKGNMb24scGFyc2VGbG9hdChkLmxvbmRvbl9nb2xkKSl9CmlmKGQuYXU5OTk5KXVwQyhjQXUscGFyc2VGbG9hdChkLmF1OTk5OSkpOwppZihkLm5ld3Mpe3ZhciBoPScnO2QubmV3cy5mb3JFYWNoKGZ1bmN0aW9uKG4pe2grPSc8ZGl2IGNsYXNzPSJuZXdzLWl0ZW0iPicrKChuLnRpbWV8fG4udGltZSk/JzxzcGFuIHN0eWxlPSJjb2xvcjojODg5MmIwO2ZvbnQtc2l6ZToxMHB4Ij4nK24udGltZSsnIDwvc3Bhbj4nOicnKSsobi50aXRsZV9jbnx8bi50aXRsZXx8Jz8nKSsnPC9kaXY+J30pO2RvY3VtZW50LmdldEVsZW1lbnRCeUlkKCduZXdzU2VjJykuaW5uZXJIVE1MPWh9Cn1jYXRjaChlKXt9fQpyZWYoKTtzZXRJbnRlcnZhbChyZWYsMzAwMDApOwo8L3NjcmlwdD48L2JvZHk+PC9odG1sPg==").decode()
 
 
 @app.route("/health")
+def health():
+    return {"status": "ok", "time": time.strftime("%Y-%m-%d %H:%M:%S")}
+
+
+def scheduler():
+    time.sleep(10)
+    log.info("定时推送启动")
+    last_h = -1
+    while True:
+        try:
+            h = datetime.now().hour
+            if h in [9, 15, 21] and h != last_h:
+                log.info(f"日报推送 {h}点")
+                try:
+                    from auto_operate import push_daily_report
+                    push_daily_report()
+                except: pass
+                last_h = h
+        except: pass
+        time.sleep(300)
+
+
+threading.Thread(target=scheduler, daemon=True).start()
+log.info("黄金智投服务启动完成")
+
++d.gold_usd.toFixed(2);document.getElementById('gUsdT').textContent='$/oz '+d.time}\nif(d.gold_cny)document.getElementById('gCny').textContent=d.gold_cny;\nif(d.dxy)document.getElementById('gDxy').textContent=d.dxy.toFixed(2);\nif(d.london_gold){document.getElementById('gLon').textContent=d.london_gold;upC(cLon,parseFloat(d.london_gold))}\nif(d.au9999)upC(cAu,parseFloat(d.au9999));\nif(d.news){var h='';d.news.forEach(function(n){h+='<div class=\"news-item\">'+((n.time||n.time)?'<span style=\"color:#8892b0;font-size:10px\">'+n.time+' </span>':'')+(n.title_cn||n.title||'?')+'</div>'});document.getElementById('newsSec').innerHTML=h}\n}catch(e){}}\nref();setInterval(ref,30000);\n</script></body></html>"@app.route("/health")
 def health():
     return {"status": "ok", "time": time.strftime("%Y-%m-%d %H:%M:%S")}
 

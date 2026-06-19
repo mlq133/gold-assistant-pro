@@ -1,0 +1,9 @@
+{
+  "pushplus_token": "525c9a8249cd4677ac7503feca84ea39",
+  "serverchan_key": "",
+  "bark_key": "",
+  "enabled": "pushplus",
+  "push_on_buy": true,
+  "push_on_sell": true,
+  "push_on_alert": true
+}

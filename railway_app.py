@@ -64,7 +64,7 @@ def wechat():
 
 def _handle_cmd(cmd):
     if not cmd:
-        return "\u53d1\u9001 \u884c\u60c5/\u5206\u6790/\u51b3\u7b56/\u65b0\u95fb/\u9884\u6d4b/\u770b\u677f \u83b7\u53d6\u5b9e\u65f6\u6570\u636e"
+        return "发送 行情/分析/决策/新闻/预测/看板 获取实时数据"
     try:
         from data_fetcher import get_live_gold_sync, fetch_gold_cny, compute_dxy_from_rates
         from news_fetcher import fetch_gold_news, analyze_news_sentiment
@@ -75,58 +75,91 @@ def _handle_cmd(cmd):
         sentiment = analyze_news_sentiment(news)
         now = (datetime.utcnow() + __import__("datetime").timedelta(hours=8)).strftime("%m-%d %H:%M")
         nl = chr(10)
-        if "\u884c\u60c5" in cmd or "price" in cmd.lower():
-            msg = "\u5b9e\u65f6\u91d1\u4ef7 " + now + nl*2
-            msg += "\u56fd\u9645\u91d1\u4ef7: $" + str(round(usd,2)) + "/\u76ce\u53f8" + nl
-            msg += "\u4eba\u6c11\u5e01\u91d1\u4ef7: " + str(cny) + "/\u514b" + nl
-            msg += "\u7f8e\u5143\u6307\u6570: " + str(dxy) + nl*2
-            msg += "\u65b0\u95fb\u60c5\u7eea: " + str(sentiment.get("summary","\u4e2d\u6027")) + nl*2
-            msg += "https://web-production-305e8.up.railway.app"
-            return msg
-        elif "\u5206\u6790" in cmd:
-            msg = "AI\u9ec4\u91d1\u5206\u6790 " + now + nl*2
-            msg += "\u56fd\u9645\u91d1\u4ef7: $" + str(round(usd,2)) + "/\u76ce\u53f8" + nl
-            msg += "\u4eba\u6c11\u5e01\u91d1\u4ef7: " + str(cny) + "/\u514b" + nl
-            msg += "\u7f8e\u5143\u6307\u6570: " + str(dxy) + nl*2
-            for n in (news or [])[:3]:
-                t = n.get("title","?")
-                msg += "- " + t[:40] + nl
-            msg += nl + "\u60c5\u7eea: " + str(sentiment.get("summary","\u4e2d\u6027"))
-            return msg
-        elif "\u51b3\u7b56" in cmd:
-            msg = "\u4eca\u65e5\u51b3\u7b56 " + now + nl*2
-            msg += "\u56fd\u9645: $" + str(round(usd,2)) + "/\u76ce\u53f8" + nl
-            msg += "\u4eba\u6c11\u5e01: " + str(cny) + "/\u514b" + nl
-            msg += "\u7f8e\u6307: " + str(dxy) + nl*2
-            msg += "\u5efa\u8bae: \u6301\u6709\u89c2\u671b"
-            return msg
-        elif "\u65b0\u95fb" in cmd:
-            msg = "\u9ec4\u91d1\u65b0\u95fb " + now + nl*2
-            msg += "\u60c5\u7eea: " + str(sentiment.get("summary","\u4e2d\u6027")) + nl*2
-            for n in (news or [])[:5]:
-                t = n.get("title","?")
-                msg += "- " + t[:50] + nl
-            return msg
-        elif "\u9884\u6d4b" in cmd:
+        if "行情" in cmd or "price" in cmd.lower():
+            msg = "实时金价 " + now + nl*2
+            msg += "国际金价: $" + str(round(usd,2)) + "/盎司" + nl
+            msg += "人民币金价: " + str(cny) + "/克" + nl
+            msg += "美元指数: " + str(dxy) + nl*2
+            msg += "新闻情绪: " + str(sentiment.get("summary","中性")) + nl*2
             try:
                 from ml_predictor import get_ml_report
                 ml = get_ml_report()
-                msg = "AI\u9884\u6d4b " + now + nl*2
-                msg += "\u65b9\u5411: " + str(ml.get("rf_direction","\u9707\u8361")) + nl
-                msg += "\u7f6e\u4fe1\u5ea6: " + str(ml.get("rf_confidence","0")) + "%" + nl
-                msg += "ML\u8bc4\u5206: " + str(ml.get("ml_score","50")) + "/100"
+                msg += "AI预测: " + str(ml.get("rf_direction","震荡")) + " (" + str(ml.get("rf_confidence","0")) + "%)" + nl
+                msg += "综合评分: " + str(int(ml.get("ml_score",50))) + "/100"
+            except:
+                pass
+            return msg
+        elif "分析" in cmd:
+            msg = "AI黄金分析 " + now + nl*2
+            msg += "国际金价: $" + str(round(usd,2)) + "/盎司" + nl
+            msg += "人民币金价: " + str(cny) + "/克" + nl
+            msg += "美元指数: " + str(dxy) + nl*2
+            for n in (news or [])[:3]:
+                t = n.get("title","?")
+                tc = n.get("title_cn","") or n.get("title","?")
+                ts = n.get("time","")
+                msg += ("[" + ts + "] " if ts else "") + str(tc)[:40] + nl
+            msg += nl + "情绪: " + str(sentiment.get("summary","中性"))
+            return msg
+        elif "决策" in cmd:
+            msg = "今日决策 " + now + nl*2
+            msg += "国际金价: $" + str(round(usd,2)) + "/盎司" + nl
+            msg += "人民币金价: " + str(cny) + "/克" + nl
+            msg += "美元指数: " + str(dxy) + nl*2
+            try:
+                from ml_predictor import get_ml_report
+                ml = get_ml_report()
+                direction = str(ml.get("rf_direction","震荡"))
+                conf = str(ml.get("rf_confidence","0"))
+                score = float(ml.get("ml_score",50))
+                msg += "AI机器学习分析" + nl
+                msg += "趋势: " + direction + " (置信度 " + conf + "%)" + nl
+                msg += "综合评分: " + str(int(score)) + "/100" + nl
+                if score >= 70: msg += "评级: ★★★★★ 强劲" + nl
+                elif score >= 55: msg += "评级: ★★★★ 偏强" + nl
+                elif score >= 45: msg += "评级: ★★★ 中性" + nl
+                elif score >= 30: msg += "评级: ★★ 偏弱" + nl
+                else: msg += "评级: ★ 较弱" + nl
+                if score >= 65:
+                    msg += "操作: 关注加仓 | 目标: 分批建仓" + nl
+                elif score <= 35:
+                    msg += "操作: 减仓避险 | 措施: 等待回调" + nl
+                else:
+                    msg += "操作: 持有观望 | 策略: 保持现有仓位" + nl
+            except:
+                msg += "建议: 持有观望" + nl
+            msg += nl + "新闻情绪: " + str(sentiment.get("summary","中性"))
+            return msg
+        elif "新闻" in cmd:
+            msg = "黄金新闻 " + now + nl*2
+            msg += "情绪: " + str(sentiment.get("summary","中性")) + nl*2
+            for n in (news or [])[:5]:
+                t = n.get("title_cn","") or n.get("title","?")
+                ts = n.get("time","")
+                msg += ("[" + ts + "] " if ts else "- ") + str(t)[:50] + nl
+            return msg
+        elif "预测" in cmd:
+            try:
+                from ml_predictor import get_ml_report
+                ml = get_ml_report()
+                msg = "AI预测 " + now + nl*2
+                msg += "方向: " + str(ml.get("rf_direction","震荡")) + nl
+                msg += "置信度: " + str(ml.get("rf_confidence","0")) + "%" + nl
+                msg += "ML评分: " + str(ml.get("ml_score","50")) + "/100" + nl*2
+                msg += "RF模型: " + str(ml.get("rf_pred","-")) + nl
+                msg += "LSTM: " + str(ml.get("lstm_pred","-"))
                 return msg
             except Exception as e2:
-                return "\u9884\u6d4b\u670d\u52a1\u6682\u4e0d\u53ef\u7528"
-        elif "\u770b\u677f" in cmd:
-            msg = "\u6570\u636e\u770b\u677f " + now
+                return "预测服务暂不可用"
+        elif "看板" in cmd:
+            msg = "数据看板 " + now
             msg += nl + "https://web-production-305e8.up.railway.app/"
-            msg += nl + "\u8bf7\u590d\u5236\u5230\u6d4f\u89c8\u5668\u6253\u5f00"
+            msg += nl + "请复制到浏览器打开"
             return msg
-        return "\u53d1\u9001 \u884c\u60c5/\u5206\u6790/\u51b3\u7b56/\u65b0\u95fb/\u9884\u6d4b/\u770b\u677f \u83b7\u53d6\u6570\u636e"
+        return "发送 行情/分析/决策/新闻/预测/看板 获取数据"
     except Exception as e:
-        log.error("\u6307\u4ee4\u5f02\u5e38: " + str(e))
-        return "\u7cfb\u7edf\u5fd9\uff0c\u8bf7\u7a0d\u540e\u518d\u8bd5"
+        log.error("指令异常: " + str(e))
+        return "系统忙，请稍后再试"
 def _xml_resp(to_user, content, from_user="gh_goldassistant"):
     now = str(int(time.time()))
     xml = f"""<xml>

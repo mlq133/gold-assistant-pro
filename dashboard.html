@@ -1,13 +1,11 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>黄金智投助手</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif}
-body{background:#0a0e1a;color:#e0e6f0;min-height:100vh;padding:16px}
+body{background:#0a0e1a;color:#e0e6f0;padding:16px}
 .container{max-width:860px;margin:0 auto}
 h1{font-size:22px;margin-bottom:16px;color:#f0b90b;display:flex;align-items:center;gap:8px}
 .grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
@@ -17,84 +15,38 @@ h1{font-size:22px;margin-bottom:16px;color:#f0b90b;display:flex;align-items:cent
 .card .value.gold{color:#f0b90b}
 .card .label{font-size:12px;color:#8892b0;margin-top:2px}
 .full{grid-column:1/-1}
-.chart-wrap{background:#0d1525;border-radius:8px;padding:12px;margin-top:8px;height:180px}
-.chart-wrap canvas{width:100%!important;height:100%!important}
+.chart-wrap{background:#0d1525;border-radius:8px;padding:12px;margin-top:8px;height:180px;position:relative}
 .news-item{padding:6px 0;border-bottom:1px solid #1e2a45;font-size:12px;line-height:1.4}
 .news-item:last-child{border:none}
-.news-item .time{font-size:10px;color:#8892b0}
-.news-item .src{font-size:10px;color:#f0b90b}
 .footer{text-align:center;color:#4a5568;font-size:11px;margin-top:16px;padding:8px}
-.tag{display:inline-block;padding:1px 6px;border-radius:3px;font-size:10px;background:#1e2a45;color:#8892b0}
-</style>
-</head>
+</style></head>
 <body>
 <div class="container">
 <h1>🥇 黄金智投助手</h1>
 <div class="grid">
-<div class="card"><h3>国际金价 XAU/USD</h3><div class="value gold" id="goldUsd">--</div><div class="label" id="goldUsdTime">$/oz</div></div>
-<div class="card"><h3>人民币金价</h3><div class="value gold" id="goldCny">--</div><div class="label">元/克</div></div>
-<div class="card"><h3>美元指数 DXY</h3><div class="value" id="dxy">--</div><div class="label">指数</div></div>
-<div class="card"><h3>新闻情绪</h3><div class="value" id="sentiment" style="font-size:18px">--</div><div class="label">市场情绪</div></div>
+<div class="card"><h3>国际金价</h3><div class="value gold" id="gUsd">--</div><div class="label" id="gUsdT">$/oz</div></div>
+<div class="card"><h3>人民币金价</h3><div class="value gold" id="gCny">--</div><div class="label">元/克</div></div>
+<div class="card"><h3>伦敦金</h3><div class="value" id="gLon">--</div><div class="label">XAU/GBP</div></div>
+<div class="card"><h3>美元指数</h3><div class="value" id="gDxy">--</div><div class="label">DXY</div></div>
 </div>
-
-<div class="card full"><h3>伦敦金 XAU/GBP 走势</h3>
-<div class="chart-wrap"><canvas id="londonChart"></canvas></div>
+<div class="card full"><h3>伦敦金 XAU/GBP 走势</h3><div class="chart-wrap"><canvas id="chartLon"></canvas></div></div>
+<div class="card full" style="margin-top:10px"><h3>AU9999 国内金 走势</h3><div class="chart-wrap"><canvas id="chartAu"></canvas></div></div>
+<div class="card full" style="margin-top:10px"><h3>📰 新闻</h3><div id="newsSec" style="margin-top:8px">加载中...</div></div>
+<div class="footer">每30秒自动刷新</div>
 </div>
-
-<div class="card full" style="margin-top:10px"><h3>AU9999 国内现货金 走势</h3>
-<div class="chart-wrap"><canvas id="auChart"></canvas></div>
-</div>
-
-<div class="card full" style="margin-top:10px">
-<h3>📰 黄金新闻</h3>
-<div id="newsSection" style="margin-top:8px">加载中...</div>
-</div>
-
-<div class="footer">黄金智投助手 &bull; 数据每30秒自动刷新</div>
-</div>
-
 <script>
-var priceHistory = { london: [], au: [] };
-var londonChart = null, auChart = null;
-
-function initChart(canvasId, label, color, dataRef) {
-    var ctx = document.getElementById(canvasId).getContext('2d');
-    return new Chart(ctx, {
-        type: 'line',
-        data: { labels: [], datasets: [{ label: label, data: dataRef, borderColor: color, backgroundColor: color + '20', borderWidth: 2, fill: true, tension: 0.3, pointRadius: 0 }] },
-        options: { responsive: true, maintainAspectRatio: false,
-            plugins: { legend: { display: false } },
-            scales: { x: { display: false }, y: { grid: { color: '#1e2a45' }, ticks: { color: '#8892b0', font: { size: 10 } } } }
-        }
-    });
-}
-
-function updateChart(chart, val) {
-    if (!chart || val == null) return;
-    var now = new Date();
-    chart.data.labels.push(now.getHours() + ':' + String(now.getMinutes()).padStart(2,'0'));
-    chart.data.datasets[0].data.push(val);
-    if (chart.data.labels.length > 30) { chart.data.labels.shift(); chart.data.datasets[0].data.shift(); }
-    chart.update('none');
-}
-
-async function refresh(){
-try{
-var r=await fetch('/api/data'); if(!r.ok) return;
-var d=await r.json();
-if(d.gold_usd){document.getElementById('goldUsd').textContent='$'+d.gold_usd.toFixed(2);document.getElementById('goldUsdTime').textContent='$/oz '+d.time}
-if(d.gold_cny) document.getElementById('goldCny').textContent=d.gold_cny;
-if(d.dxy) document.getElementById('dxy').textContent=d.dxy.toFixed(2);
-if(d.london_gold){document.getElementById('londonGold')?document.getElementById('londonGold').textContent=d.london_gold:null;updateChart(londonChart,d.london_gold)}
-if(d.au9999) updateChart(auChart,d.au9999);
-if(d.sentiment){var s=d.sentiment;document.getElementById('sentiment').textContent=s.summary||'中性'}
-if(d.news){var h='';d.news.slice(0,10).forEach(function(n){h+='<div class="news-item"><span class="time">'+(n.time||'')+'</span> '+(n.title_cn||n.title||'?')+' <span class="src">'+n.source+'</span></div>'});document.getElementById('newsSection').innerHTML=h}
-}catch(e){}
-}
-londonChart=initChart('londonChart','XAU/GBP','#f0b90b',priceHistory.london);
-auChart=initChart('auChart','AU9999','#00c853',priceHistory.au);
-refresh();
-setInterval(refresh,30000);
-</script>
-</body>
-</html>
+var hLon=[],hAu=[],cLon=null,cAu=null;
+function mkC(id,c){var ctx=document.getElementById(id).getContext('2d');return new Chart(ctx,{type:'line',data:{labels:[],datasets:[{data:[],borderColor:c,backgroundColor:c+'20',borderWidth:2,fill:true,tension:0.3,pointRadius:0}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{display:false},y:{grid:{color:'#1e2a45'},ticks:{color:'#8892b0',font:{size:10}}}}}})}
+function upC(ch,v){if(!ch||v==null)return;var d=new Date();ch.data.labels.push(d.getHours()+':'+String(d.getMinutes()).padStart(2,'0'));ch.data.datasets[0].data.push(v);if(ch.data.labels.length>30){ch.data.labels.shift();ch.data.datasets[0].data.shift()}ch.update('none')}
+cLon=mkC('chartLon','#f0b90b');cAu=mkC('chartAu','#00c853');
+async function ref(){try{
+var r=await fetch('/api/data');if(!r.ok)return;var d=await r.json();
+if(d.gold_usd){document.getElementById('gUsd').textContent='$'+d.gold_usd.toFixed(2);document.getElementById('gUsdT').textContent='$/oz '+d.time}
+if(d.gold_cny)document.getElementById('gCny').textContent=d.gold_cny;
+if(d.dxy)document.getElementById('gDxy').textContent=d.dxy.toFixed(2);
+if(d.london_gold){document.getElementById('gLon').textContent=d.london_gold;upC(cLon,parseFloat(d.london_gold))}
+if(d.au9999)upC(cAu,parseFloat(d.au9999));
+if(d.news){var h='';d.news.forEach(function(n){h+='<div class="news-item">'+((n.time||n.time)?'<span style="color:#8892b0;font-size:10px">'+n.time+' </span>':'')+(n.title_cn||n.title||'?')+'</div>'});document.getElementById('newsSec').innerHTML=h}
+}catch(e){}}
+ref();setInterval(ref,30000);
+</script></body></html>

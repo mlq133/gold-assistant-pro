@@ -109,7 +109,19 @@ def _handle_cmd(cmd):
                 t = n.get("title","?")
                 msg += "- " + t[:50] + nl
             return msg
-        return "发送 行情/分析/决策/新闻 获取数据"
+            elif "预测" in cmd:
+            try:
+                from ml_predictor import get_ml_report
+                ml = get_ml_report()
+                msg = "AI预测 " + now + chr(10)*2
+                msg += "方向: " + str(ml.get("rf_direction","震荡")) + chr(10)
+                msg += "置信度: " + str(ml.get("rf_confidence","0")) + "%" + chr(10)
+                msg += "ML评分: " + str(ml.get("ml_score","50")) + "/100"
+                return msg
+            except Exception as e2:
+                log.error("ML预测失败: " + str(e2))
+                return "预测服务暂不可用，请稍后再试"
+    return "发送 行情/分析/决策/新闻/预测 获取数据"
     except Exception as e:
         log.error("指令异常: " + str(e))
         return "系统繁忙，请稍后再试"

@@ -1,4 +1,4 @@
-﻿# -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 """
 黄金智投助手 - Railway云部署 (Flask版)
 """
@@ -64,18 +64,51 @@ def wechat():
 
 def _handle_cmd(cmd):
     if not cmd:
-        return "发送 行情/分析/决策/新闻 获取实时数据"
+        return "?? ??/??/??/?? ??????"
     try:
-        from update_reply import get_realtime
-        for kw in ["行情", "分析", "决策", "新闻"]:
-            if kw in cmd:
-                return get_realtime(kw)
-        return "发送 行情/分析/决策/新闻 获取实时数据"
+        from data_fetcher import get_live_gold_sync, fetch_gold_cny, compute_dxy_from_rates
+        from news_fetcher import fetch_gold_news, analyze_news_sentiment
+        usd = get_live_gold_sync()
+        cny = fetch_gold_cny()
+        dxy = compute_dxy_from_rates()
+        news = fetch_gold_news(5)
+        sentiment = analyze_news_sentiment(news)
+        now = datetime.now().strftime("%m-%d %H:%M")
+        nl = chr(10)
+        if "??" in cmd:
+            msg = f"???? {now}{nl*2}"
+            msg += f"????: ${round(usd,2)}/??{nl}"
+            msg += f"?????: {cny}/?{nl}"
+            msg += f"????: {dxy}{nl*2}"
+            msg += f"????: {sentiment.get(chr(115)+chr(117)+chr(109)+chr(109)+chr(97)+chr(114)+chr(121), chr(20013)+chr(24615))}"
+            msg += nl*2 + "https://web-production-305e8.up.railway.app"
+            return msg
+        elif "??" in cmd:
+            msg = f"AI???? {now}{nl*2}"
+            msg += f"????: ${round(usd,2)}/??{nl}"
+            msg += f"?????: {cny}/?{nl}"
+            msg += f"????: {dxy}{nl*2}"
+            for n in (news or [])[:3]:
+                t = n.get(chr(116)+chr(105)+chr(116)+chr(108)+chr(101), "?")
+                msg += f"- {t[:40]}{nl}"
+            return msg
+        elif "??" in cmd:
+            msg = f"???? {now}{nl*2}"
+            msg += f"??: ${round(usd,2)}/??{nl}"
+            msg += f"???: {cny}/?{nl}"
+            msg += f"??: {dxy}{nl*2}"
+            msg += "??: ????"
+            return msg
+        elif "??" in cmd:
+            msg = f"???? {now}{nl*2}"
+            for n in (news or [])[:5]:
+                t = n.get(chr(116)+chr(105)+chr(116)+chr(108)+chr(101), "?")
+                msg += f"- {t[:50]}{nl}"
+            return msg
+        return "?? ??/??/??/?? ????"
     except Exception as e:
-        log.error(f"指令异常: {e}")
-        return "系统繁忙，请稍后再试"
-
-
+        log.error(f"????: {e}")
+        return "??????????"
 def _xml_resp(to_user, content, from_user="gh_goldassistant"):
     now = str(int(time.time()))
     xml = f"""<xml>
@@ -144,3 +177,4 @@ def scheduler():
 
 threading.Thread(target=scheduler, daemon=True).start()
 log.info("黄金智投服务启动完成")
+

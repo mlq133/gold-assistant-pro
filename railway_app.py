@@ -144,24 +144,24 @@ def _xml_resp(to_user, content, from_user="gh_goldassistant"):
 @app.route("/api/data")
 def api_data():
     try:
-        from data_fetcher import get_live_gold_sync, fetch_gold_cny, compute_dxy_from_rates
+        from data_fetcher import get_live_gold_sync, fetch_gold_cny, compute_dxy_from_rates, fetch_london_gold, fetch_au9999
         from news_fetcher import fetch_gold_news, analyze_news_sentiment
         usd = get_live_gold_sync()
         cny = fetch_gold_cny()
         dxy = compute_dxy_from_rates()
-        news = fetch_gold_news(5)
+        london = fetch_london_gold()
+        au = fetch_au9999()
+        news = fetch_gold_news(10)
         sentiment = analyze_news_sentiment(news)
         return {
             "gold_usd": round(usd, 2) if usd else None,
             "gold_cny": cny, "dxy": dxy,
-            "news": [{"title": n.get("title",""), "source": n.get("source","")} for n in (news or [])],
+            "london_gold": london, "au9999": au,
+            "news": [{"title": n.get("title",""), "title_cn": n.get("title_cn",""), "source": n.get("source",""), "time": n.get("time","")} for n in (news or [])],
             "sentiment": sentiment, "time": time.strftime("%H:%M:%S")
         }
     except Exception as e:
-        return {"error": str(e)}
-
-
-@app.route("/")
+        return {"error": str(e)}@app.route("/")
 def index():
     try:
         with open(os.path.join(PROJECT_DIR, "dashboard.html"), "r", encoding="utf-8") as f:
